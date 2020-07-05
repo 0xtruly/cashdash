@@ -1,70 +1,64 @@
-// import * as firebase from 'firebase';
-import firebase from 'firebase/app';
+import * as firebase from 'firebase';
 import 'firebase/firestore';
-import 'firebase/auth';
-import 'firebase/storage';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyDUJoykJxBrSc_wMm70AIYLQpYfRg3cuRw',
-  authDomain: 'cashdash-01.firebaseapp.com',
-  databaseURL: 'https://cashdash-01.firebaseio.com',
-  projectId: 'cashdash-01',
-  storageBucket: 'cashdash-01.appspot.com',
-  messagingSenderId: '344150785075',
-  appId: '1:344150785075:web:09d496cd17c9524856f746',
-  measurementId: 'G-EPSX06J8GN',
-};
+import config from './config.json';
 
-firebase.initializeApp(firebaseConfig);
+let cashdash = firebase.initializeApp(config, 'cashdash');
 
-export const fireMethods = {
-  dataBase: firebase.firestore(),
-  auth: firebase.auth(),
-};
-fireMethods.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+export const _dataBase = cashdash.firestore();
+export const _auth = cashdash.auth();
+export const storage = cashdash.storage();
 
 export const provider = new firebase.auth.GoogleAuthProvider();
+export const signInWithGoogle = () => _auth.signInWithPopup(provider);
+export const signOut = () =>
+  _auth
+    .signOut()
+    .then(() => console.log('signed out'))
+    .catch((e) => console.log(e.message));
 
-provider.setCustomParameters({ prompt: 'select_account' });
+window.firebase = firebase;
 
-export const signInWithGoogle = () =>
-  fireMethods.auth.signInWithPopup(provider);
-
-export const signOut = () => fireMethods.auth.signOut();
+if (process.env.NODE_ENV === 'test') {
+  _auth.setPersistence(firebase.auth.Auth.Persistence.NONE);
+} else {
+  _auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+}
 
 export const createUserProfileDocument = async (user, additionalData) => {
   if (!user) return;
-  //get a reference to the place in the db where a user profile might be.
-  const userRef = fireMethods.dataBase.doc(`users/{user.uid}`);
-  // Go and fetch the document from that location
-  const snapShot = await userRef.get();
+  // Get a reference to the place in the database where a user profile might be.
+  const userRef = firestore.collection('users').doc(user.uid);
 
-  if (!snapShot.exists) {
-    const { displayName, email, photoURL } = user;
+  // Go and fetch the document from that location.
+  const snapshot = await userRef.get();
+  console.log('snappp', snapshot);
+
+  if (!snapshot.exists) {
+    const { displayName, email, photoURL, uid } = user;
     const createdAt = new Date();
     try {
       await userRef.set({
+        uid,
         displayName,
         email,
         photoURL,
         createdAt,
         ...additionalData,
       });
-    } catch (e) {
-      console.error('error creating user', e);
+    } catch (error) {
+      console.error('Error creating user', error.message);
     }
   }
 
-  getUserDocument(user.uid);
+  return getUserDocument(user.uid);
 };
 
 export const getUserDocument = async (uid) => {
   if (!uid) return null;
-  const userDocument = await fireMethods.dataBase
-    .collection('users')
-    .doc(uid)
-    .get();
-  return { uid, ...userDocument.data() };
+  try {
+    return firestore.collection('users').doc(uid);
+  } catch (error) {
+    console.error('Error fetching user', error.message);
+  }
 };
-
-export default firebase;

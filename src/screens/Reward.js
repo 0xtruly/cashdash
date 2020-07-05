@@ -8,7 +8,7 @@ import Materialicons from 'react-native-vector-icons/MaterialCommunityIcons';
 const Reward = () => {
   return (
     <Layout>
-      <AvatarSection avatar height="40%">
+      <AvatarSection avatar height="40%" center="center">
         <Avatar
           source={{
             uri:

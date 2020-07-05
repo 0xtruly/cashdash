@@ -72,9 +72,9 @@ const Statistics = ({ navigation }) => {
     <Layout>
       <AvatarSection avatar height="50%">
         <View>
-          <Text style={styles.text}>₦0</Text>
+          <Text style={styles.text}>Statistics</Text>
         </View>
-        <View>
+        <View style={{ alignItems: 'center' }}>
           <LineChart
             data={{
               labels: ['January', 'February', 'March', 'April', 'May', 'June'],
@@ -130,10 +130,11 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   text: {
-    alignItems: 'center',
-    fontSize: 40,
+    fontSize: 36,
     fontFamily: 'OpenSans-Bold',
     color: '#212540',
+    paddingLeft: 15,
+    paddingVertical: 15,
   },
   button: {
     width: 149,

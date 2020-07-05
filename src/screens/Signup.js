@@ -1,98 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { SafeAreaView, View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Avatar, Input, Button } from 'react-native-elements';
-import { fireMethods } from '../utils/firebase';
+import { _auth, firestore, createUserProfileDocument } from '../utils/firebase';
 import { SIGNUP_CONST } from '../utils';
 import InputField from '../components/InputField';
-import { UserContext } from '../providers/UserProvider';
-
-const { auth } = fireMethods;
+import { useDispatch, useSelector } from 'react-redux';
+import { signup } from '../redux/Auth/action';
+import axios from 'axios';
 
 const Signup = ({ navigation }) => {
   const [fields, setfields] = useState({});
   const propOwn = Object.getOwnPropertyNames(fields);
+  const dispatch = useDispatch();
 
-  const handleSubmit = async (dispatch) => {
-    const { username, email, password } = fields;
-    try {
-      const { user } = await auth.createUserWithEmailAndPassword(
-        email,
-        password,
-      );
-      user.updateProfile({ username });
-      dispatch({
-        type: 'SIGNUP',
-        payload: user,
-      });
-      navigation.navigate('Login');
-    } catch (e) {
-      console.log('an error occurred', e);
-    }
+  const handleSubmit = async () => {
+    const url = 'http://localhost:5000/api/v1/createWallet';
+    const body = {
+      fullName: 'koffi uman',
+      email: 'usma@ymail.com',
+      userId: '3ddkd983',
+      createdAt: '22/08/19',
+      wallet: {
+        cashTag: '@usman',
+        currency: 'NGN',
+        balance: '4000',
+        sent: '1000',
+        received: '5000',
+      },
+    };
+    let x = await axios.post(url);
 
-    setfields({
-      username: '',
-      email: '',
-      password: '',
-    });
+    console.log('=======', x);
   };
   console.log('fields', JSON.stringify(fields, null, 2));
 
   return (
-    <UserContext.Consumer>
-      {(value) => {
-        const { dispatch } = value;
-        return (
-          <SafeAreaView>
-            <View style={styles.container}>
-              <View style={styles.topContent}>
-                <Text style={styles.text}>Welcome to</Text>
-                <Avatar
-                  source={{
-                    uri:
-                      'https://res.cloudinary.com/dcp4ezo2a/image/upload/f_auto,q_auto/v1593763643/Cashdashblue.png',
-                  }}
-                  size="medium"
-                  containerStyle={{ width: 200 }}
-                />
-              </View>
-              <ScrollView>
-                <View>
-                  {SIGNUP_CONST.map(({ title, placeholder, name }) => (
-                    <InputField
-                      placeholders={placeholder}
-                      color="white"
-                      TextInput={(value) => {
-                        let input = title;
-                        setfields({
-                          ...fields,
-                          [input]: value,
-                        });
-                      }}
-                      name={name}
-                    />
-                  ))}
-                </View>
-                <Button
-                  title="Sign Up"
-                  onPress={() => handleSubmit(dispatch)}
-                  buttonStyle={styles.button}
-                  containerStyle={{ alignItems: 'center' }}
-                  disabled={propOwn.length < 3 ? true : false}
-                />
-                <View style={styles.linkContainer}>
-                  <Text style={styles.link}>Already have an account? </Text>
-                  <Text
-                    style={[{ fontWeight: '700' }, styles.link]}
-                    onPress={() => navigation.navigate('Login')}>
-                    Login
-                  </Text>
-                </View>
-              </ScrollView>
-            </View>
-          </SafeAreaView>
-        );
-      }}
-    </UserContext.Consumer>
+    <SafeAreaView>
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={styles.topContent}>
+            <Text style={styles.text}>Welcome to</Text>
+            <Avatar
+              source={{
+                uri:
+                  'https://res.cloudinary.com/dcp4ezo2a/image/upload/f_auto,q_auto/v1593763643/Cashdashblue.png',
+              }}
+              size="medium"
+              containerStyle={{ width: 200 }}
+            />
+          </View>
+          <View>
+            {SIGNUP_CONST.map(({ title, placeholder, name }) => (
+              <InputField
+                key={title}
+                placeholders={placeholder}
+                color="white"
+                TextInput={(value) => {
+                  let input = title;
+                  setfields({
+                    ...fields,
+                    [input]: value,
+                  });
+                }}
+                name={name}
+              />
+            ))}
+          </View>
+          <Button
+            title="Sign Up"
+            onPress={handleSubmit}
+            buttonStyle={styles.button}
+            containerStyle={{ alignItems: 'center' }}
+            disabled={propOwn.length < 3 ? true : false}
+          />
+          <View style={styles.linkContainer}>
+            <Text style={styles.link}>Already have an account? </Text>
+            <Text
+              style={[{ fontWeight: '700' }, styles.link]}
+              onPress={() => navigation.navigate('Login')}>
+              Login
+            </Text>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

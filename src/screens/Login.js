@@ -3,25 +3,18 @@ import { SafeAreaView, View, Text, StyleSheet } from 'react-native';
 import { Avatar, Input, Button } from 'react-native-elements';
 import InputField from '../components/InputField';
 import { LOGIN_CONST } from '../utils';
-import { UserContext } from '../providers/UserProvider';
-import { fireMethods } from '../utils/firebase';
-
-const { auth } = fireMethods;
+import { _auth } from '../utils/firebase';
 
 const Login = ({ navigation }) => {
   const [authenticated, setauthenticated] = useState(false);
   const [fields, setfields] = useState({});
   const propOwn = Object.getOwnPropertyNames(fields);
 
-  const handleSubmit = async (dispatch) => {
+  const handleSubmit = async () => {
     const { email, password } = fields;
     try {
-      const { user } = await auth.signInWithEmailAndPassword(email, password);
+      const { user } = await _auth.signInWithEmailAndPassword(email, password);
 
-      dispatch({
-        type: 'LOGIN',
-        payload: user,
-      });
       navigation.navigate('Dashboard');
     } catch (e) {
       console.log('an error occurred', e);
@@ -42,68 +35,57 @@ const Login = ({ navigation }) => {
   console.log('fields', JSON.stringify(fields, null, 2));
 
   return (
-    <UserContext.Consumer>
-      {(value) => {
-        const { dispatch, reAuth } = value;
-        console.log('auth:', reAuth);
-        if (reAuth) {
-          setauthenticated(reAuth);
-        }
-        console.log('authenticated:', authenticated);
-        return (
-          <SafeAreaView>
-            <View style={styles.container}>
-              <View style={styles.topContent}>
-                <Text style={styles.text}>Welcome to</Text>
-                <Avatar
-                  source={{
-                    uri:
-                      'https://res.cloudinary.com/dcp4ezo2a/image/upload/f_auto,q_auto/v1593763643/Cashdashblue.png',
+    <SafeAreaView>
+      <View style={styles.container}>
+        <View style={styles.topContent}>
+          <Text style={styles.text}>Welcome to</Text>
+          <Avatar
+            source={{
+              uri:
+                'https://res.cloudinary.com/dcp4ezo2a/image/upload/f_auto,q_auto/v1593763643/Cashdashblue.png',
+            }}
+            size="medium"
+            containerStyle={{ width: 200 }}
+          />
+        </View>
+        <View>
+          <View>
+            {LOGIN_CONST.map(({ title, placeholder, name }) => {
+              return (
+                <InputField
+                  key={title}
+                  placeholders={placeholder}
+                  color="white"
+                  TextInput={(value) => {
+                    let input = title;
+                    setfields({
+                      ...fields,
+                      [input]: value,
+                    });
                   }}
-                  size="medium"
-                  containerStyle={{ width: 200 }}
+                  name={name}
                 />
-              </View>
-              <View>
-                <View>
-                  {LOGIN_CONST.map(({ title, placeholder, name }) => {
-                    return (
-                      <InputField
-                        placeholders={placeholder}
-                        color="white"
-                        TextInput={(value) => {
-                          let input = title;
-                          setfields({
-                            ...fields,
-                            [input]: value,
-                          });
-                        }}
-                        name={name}
-                      />
-                    );
-                  })}
-                </View>
-                <Button
-                  title="Login"
-                  onPress={() => handleSubmit(dispatch)}
-                  buttonStyle={styles.button}
-                  containerStyle={{ alignItems: 'center' }}
-                  disabled={propOwn.length < 2 ? true : false}
-                />
-                <View style={styles.linkContainer}>
-                  <Text style={styles.link}>Don't have an account yet? </Text>
-                  <Text
-                    style={[{ fontWeight: '700' }, styles.link]}
-                    onPress={() => navigation.navigate('Signup')}>
-                    Sign Up
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </SafeAreaView>
-        );
-      }}
-    </UserContext.Consumer>
+              );
+            })}
+          </View>
+          <Button
+            title="Login"
+            onPress={handleSubmit}
+            buttonStyle={styles.button}
+            containerStyle={{ alignItems: 'center' }}
+            disabled={propOwn.length < 2 ? true : false}
+          />
+          <View style={styles.linkContainer}>
+            <Text style={styles.link}>Don't have an account yet? </Text>
+            <Text
+              style={[{ fontWeight: '700' }, styles.link]}
+              onPress={() => navigation.navigate('Signup')}>
+              Sign Up
+            </Text>
+          </View>
+        </View>
+      </View>
+    </SafeAreaView>
   );
 };
 

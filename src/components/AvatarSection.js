@@ -6,7 +6,7 @@ import {
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
 
-const AvatarSection = ({ bgColor, children, top, avatar, height }) => {
+const AvatarSection = ({ bgColor, children, top, avatar, height, center }) => {
   return (
     <View
       style={[
@@ -25,19 +25,18 @@ const AvatarSection = ({ bgColor, children, top, avatar, height }) => {
           />
         ) : null}
       </View>
-      <View style={[{ top: top }, styles.content]}>{children}</View>
+      <View style={[{ top: top, alignItems: center }, styles.content]}>
+        {children}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    // height: 250,
     width: '100%',
   },
   content: {
-    justifyContent: 'center',
-    alignItems: 'center',
     position: 'relative',
   },
   avatar: {

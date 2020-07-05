@@ -8,6 +8,8 @@ import Login from './src/screens/Login';
 import Signup from './src/screens/Signup';
 import Dashboard from './src/screens/Dashboard';
 import UserProvider from './src/providers/UserProvider';
+import { store } from './src/redux';
+import { Provider } from 'react-redux';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -17,7 +19,7 @@ const App = () => {
     SplashScreen.hide();
   }, []);
   return (
-    <UserProvider>
+    <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
@@ -37,8 +39,10 @@ const App = () => {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </UserProvider>
+    </Provider>
   );
 };
+
+console.disableYellowBox = true;
 
 export default App;

@@ -2,23 +2,33 @@ export const PROFILE_LIST = [
   {
     name: 'Personal',
     icon: 'account',
+    id: 'a1',
   },
   {
     name: 'Security',
     icon: 'lock-open',
+    id: 'a2',
   },
   {
     name: 'Settings',
     icon: 'settings',
+    id: 'a3',
   },
   {
     name: 'Help',
     icon: 'help-circle-outline',
+    id: 'a4',
+  },
+  {
+    name: 'Logout',
+    icon: 'logout-variant',
+    id: 'a5',
   },
 ];
 
 export const SIGNUP_CONST = [
-  { title: 'username', placeholder: 'Username', name: 'account' },
+  { title: 'firstName', placeholder: 'Firstname', name: 'account' },
+  { title: 'lastName', placeholder: 'Lastname', name: 'account' },
   { title: 'email', placeholder: 'Email', name: 'email' },
   { title: 'password', placeholder: 'Password', name: 'lock-open' },
 ];

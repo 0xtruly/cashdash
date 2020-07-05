@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   SafeAreaView,
   Text,
@@ -13,65 +13,76 @@ import { FlatList } from 'react-native-gesture-handler';
 import { PROFILE_LIST } from '../utils';
 import Materialicons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { UserContext } from '../providers/UserProvider';
+import { signOut } from '../utils/firebase';
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
+  const handleSignout = () => {
+    const signout = signOut();
+    console.log(signout);
+    setTimeout(() => {
+      navigation.navigate('Login');
+    }, 2000);
+  };
   return (
-    <UserContext.Consumer>
-      {(value) => {
-        const { user } = value;
-        console.log('user', JSON.stringify(user, null, 2));
-        return (
-          <Layout>
-            <AvatarSection bgColor="#212540" top="35%" avatar height="40%">
-              <Avatar
-                source={{
-                  uri:
-                    'https://res.cloudinary.com/dcp4ezo2a/image/upload/f_auto,q_auto/v1593610517/clive-surreal-9kQBQqY_xrk-unsplash.jpg',
-                }}
-                size="xlarge"
-                rounded
-                containerStyle={{
-                  borderColor: 'white',
-                  borderWidth: 5,
-                  shadowColor: 'rgba(0, 0, 0, 0.25)',
-                  shadowOffset: '0px 4.77733px 4.77733px',
-                  shadowOpacity: '.25',
-                  shadowRadius: 1,
-                  elevation: 9,
-                }}
-              />
-            </AvatarSection>
-            <View style={styles.container}>
-              <FlatList
-                data={PROFILE_LIST}
-                keyExtractor={(item) => item.name}
-                renderItem={({ item }) => {
-                  return (
-                    <TouchableOpacity>
-                      <View style={[styles.list]}>
-                        <View style={styles.title}>
-                          <Materialicons
-                            style={styles.icons}
-                            name={item.icon}
-                            size={18}
-                          />
-                          <Text style={styles.text}>{item.name}</Text>
-                        </View>
-                        <Materialicons
-                          style={styles.arrow}
-                          name={'chevron-right'}
-                          size={18}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          </Layout>
-        );
-      }}
-    </UserContext.Consumer>
+    <Layout>
+      <AvatarSection
+        bgColor="#212540"
+        top="35%"
+        avatar
+        height="40%"
+        center="center">
+        <Avatar
+          source={{
+            uri:
+              'https://res.cloudinary.com/dcp4ezo2a/image/upload/f_auto,q_auto/v1593610517/clive-surreal-9kQBQqY_xrk-unsplash.jpg',
+          }}
+          size="xlarge"
+          rounded
+          containerStyle={{
+            borderColor: 'white',
+            borderWidth: 5,
+            shadowColor: 'rgba(0, 0, 0, 0.25)',
+            shadowOffset: '0px 4.77733px 4.77733px',
+            shadowOpacity: '.25',
+            shadowRadius: 1,
+            elevation: 9,
+          }}
+        />
+      </AvatarSection>
+      <View style={styles.container}>
+        <FlatList
+          data={PROFILE_LIST}
+          keyExtractor={(item) => item.name}
+          renderItem={({ item }) => {
+            return (
+              <TouchableOpacity>
+                <View style={[styles.list]}>
+                  <View style={styles.title}>
+                    <Materialicons
+                      style={styles.icons}
+                      name={item.icon}
+                      size={18}
+                    />
+                    {item.id === 'a5' ? (
+                      <Text style={styles.text} onPress={handleSignout}>
+                        {item.name}
+                      </Text>
+                    ) : (
+                      <Text style={styles.text}>{item.name}</Text>
+                    )}
+                  </View>
+                  <Materialicons
+                    style={styles.arrow}
+                    name={'chevron-right'}
+                    size={18}
+                  />
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
+    </Layout>
   );
 };
 

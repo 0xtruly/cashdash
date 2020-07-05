@@ -62,7 +62,7 @@ const Home = ({ navigation }) => {
     //   onRefresh={handleRefresh}
     // />
     <Layout>
-      <AvatarSection avatar height="40%">
+      <AvatarSection avatar height="40%" center="center">
         <View>
           <Text style={styles.text}>₦0</Text>
         </View>
